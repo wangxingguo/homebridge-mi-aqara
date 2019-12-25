@@ -524,12 +524,13 @@ MiAqaraPlatform.prototype.parseMessage = function(msg, rinfo) {
     } else if (cmd === 'get_id_list_ack' || cmd === 'discovery_rsp') {
         that.log.debug("[Revc]" + msg);
         var gatewaySid = jsonObj['sid'];
-        
+        // update gateway first '0'
+        if (gatewaySid.substring(0,1) == 0) gatewaySid = gatewaySid.substring(1);
         // update gateway token
         var gateway = that.GatewayUtil.getBySid(gatewaySid);
         if(gateway) {
             that.GatewayUtil.addOrUpdate(gatewaySid, {token: jsonObj['token']});
-        
+            
             // add gateway sub device
             var deviceSids = that.getDeviceListByJsonObj(jsonObj, gateway.proto_version);
             var index = 0;
@@ -571,7 +572,7 @@ MiAqaraPlatform.prototype.parseMessage = function(msg, rinfo) {
 //      that.log.debug("[Revc]" + msg);
         var model = jsonObj['model'];
         var sid = jsonObj['sid'];
-        
+        if (sid.substring(0,1) == 0) sid = sid.substring(1);
         if (that.ParseUtil.isGatewayModel(model)) {
             that.GatewayUtil.update(sid, {token: jsonObj['token']});
         }
